@@ -5,6 +5,7 @@ Resources:
     Type: AWS::Lambda::Function
     Properties:
       FunctionName: email
+      Role: !GetAtt LambdaExecutionRole.Arn
       Runtime: python3.9
       Handler: index.handler
       Code:
@@ -14,7 +15,6 @@ Resources:
                 "statusCode": 200, 
                 "body": "Hello from Lambda!"
             } 
-      Role: !GetAtt LambdaExecutionRole.Arn
       Timeout: 30
       MemorySize: 128
 
