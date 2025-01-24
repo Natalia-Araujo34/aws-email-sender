@@ -9,7 +9,11 @@ Resources:
       Runtime: python3.9
       Handler: index.handler
       Code:
-        S3Bucket: sourcecoderepos001
-        S3Key: email_reminder.zip
+        ZipFile: | 
+          def handler(event, context):
+            return { 
+                "statusCode": 200, 
+                "body": "Hello from Lambda!"
+            } 
       Timeout: 30
       MemorySize: 128
