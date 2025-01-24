@@ -9,16 +9,16 @@ Resources:
       Runtime: python3.9
       Handler: index.handler
       Code:
-        ZipFile: | 
+        ZipFile: |
           def handler(event, context):
-            return { 
-                "statusCode": 200, 
-                "body": "Hello from Lambda!"
-            } 
+              return {
+                  "statusCode": 200,
+                  "body": "Hello from Lambda!"
+              }
       Timeout: 30
       MemorySize: 128
 
-LambdaExecutionRole:
+  LambdaExecutionRole:
     Type: AWS::IAM::Role
     Properties:
       AssumeRolePolicyDocument:
@@ -28,7 +28,7 @@ LambdaExecutionRole:
             Principal:
               Service:
                 - lambda.amazonaws.com
-            Action: 
+            Action:
               - sts:AssumeRole
       Policies:
         - PolicyName: LambdaExecutionPolicy
