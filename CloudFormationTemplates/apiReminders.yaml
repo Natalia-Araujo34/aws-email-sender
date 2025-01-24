@@ -1,0 +1,80 @@
+AWSTemplateFormatVersion: "2010-09-09"
+Description: "Infrastructure as Code for a reminders API Gateway integrated with the existing Lambda function api_handler."
+
+Resources:
+  # API Gateway Rest API
+  RemindersApi:
+    Type: AWS::ApiGateway::RestApi
+    Properties:
+      Name: reminders
+      Description: "A simple API for reminders"
+      EndpointConfiguration:
+        Types:
+          - REGIONAL
+
+  # API Gateway Resource (reminders)
+  RemindersResource:
+    Type: AWS::ApiGateway::Resource
+    Properties:
+      RestApiId: !Ref RemindersApi
+      ParentId: !GetAtt RemindersApi.RootResourceId
+      PathPart: reminders
+
+  # POST Method for the reminders resource with Lambda proxy integration
+  RemindersPostMethod:
+    Type: AWS::ApiGateway::Method
+    Properties:
+      AuthorizationType: NONE
+      HttpMethod: POST
+      ResourceId: !Ref RemindersResource
+      RestApiId: !Ref RemindersApi
+      Integration:
+        Type: AWS_PROXY
+        IntegrationHttpMethod: POST
+        Uri: arn:aws:apigateway:us-east-1:lambda:path/2015-03-31/functions/arn:aws:lambda:us-east-1:531193295833:function:api_handler/invocations
+      MethodResponses:
+        - StatusCode: 200
+
+  # Lambda Permission for API Gateway to invoke the existing Lambda function
+  ApiHandlerPermission:
+    Type: AWS::Lambda::Permission
+    Properties:
+      Action: lambda:InvokeFunction
+      FunctionName: arn:aws:lambda:us-east-1:531193295833:function:api_handler
+      Principal: apigateway.amazonaws.com
+      SourceArn: !Sub arn:aws:execute-api:${AWS::Region}:${AWS::AccountId}:${RemindersApi}/*/POST/reminders
+
+  # Enable CORS for the POST method
+  RemindersOptionsMethod:
+    Type: AWS::ApiGateway::Method
+    Properties:
+      AuthorizationType: NONE
+      HttpMethod: OPTIONS
+      ResourceId: !Ref RemindersResource
+      RestApiId: !Ref RemindersApi
+      Integration:
+        Type: MOCK
+        RequestTemplates:
+          application/json: '{"statusCode": 200}'
+        IntegrationResponses:
+          - StatusCode: 200
+            ResponseParameters:
+              method.response.header.Access-Control-Allow-Headers: "'Content-Type'"
+              method.response.header.Access-Control-Allow-Methods: "'OPTIONS,POST'"
+              method.response.header.Access-Control-Allow-Origin: "'*'"
+      MethodResponses:
+        - StatusCode: 200
+          ResponseParameters:
+            method.response.header.Access-Control-Allow-Headers: true
+            method.response.header.Access-Control-Allow-Methods: true
+            method.response.header.Access-Control-Allow-Origin: true
+
+  # Deploy the API Gateway to a new stage (prod)
+  ApiGatewayDeployment:
+    Type: AWS::ApiGateway::Deployment
+    Properties:
+      RestApiId: !Ref RemindersApi
+      StageName: prod
+    DependsOn: 
+      - RemindersPostMethod
+      - RemindersOptionsMethod

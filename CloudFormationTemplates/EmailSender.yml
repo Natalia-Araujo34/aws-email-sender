@@ -1,0 +1,10 @@
+AWSTemplateFormatVersion: "2010-09-09"
+Resources:
+  
+  # Definir a identidade de e-mail (para envio de e-mails via SES)
+  SimpleEmailServiceIdentity:
+  #Tipo de recurso a ser criado
+    Type: AWS::SES::EmailIdentity
+  #Configuração do recurso
+    Properties:
+      EmailIdentity: "nataliaskadi@gmail.com"

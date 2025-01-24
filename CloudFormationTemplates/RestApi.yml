@@ -1,0 +1,41 @@
+AWSTemplateFormatVersion: "2010-09-09"
+
+Resources:
+  # API Gateway Rest API
+  RemindersApi:
+    Type: AWS::ApiGateway::RestApi
+    Properties:
+      Name: reminders
+      Description: "A simple API for reminders"
+      EndpointConfiguration:
+        Types:
+          - REGIONAL
+
+  # API Gateway Resource (reminders)
+  RemindersResource:
+    Type: AWS::ApiGateway::Resource
+    Properties:
+      RestApiId: !Ref RemindersApi
+      ParentId: !GetAtt RemindersApi.RootResourceId
+      PathPart: reminders
+
+  # POST Method for the reminders resource
+  RemindersPostMethod:
+    Type: AWS::ApiGateway::Method
+    Properties:
+      AuthorizationType: NONE
+      HttpMethod: POST
+      ResourceId: !Ref RemindersResource
+      RestApiId: !Ref RemindersApi
+      Integration:
+        Type: MOCK
+      MethodResponses:
+        - StatusCode: 200
+
+  # Deploy the API Gateway to a new stage (prod)
+  ApiGatewayDeployment:
+    Type: AWS::ApiGateway::Deployment
+    Properties:
+      RestApiId: !Ref RemindersApi
+      StageName: prod
+    DependsOn: RemindersPostMethod

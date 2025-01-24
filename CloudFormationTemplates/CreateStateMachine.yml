@@ -1,0 +1,38 @@
+AWSTemplateFormatVersion: "2010-09-09"
+Resources:
+  # Step Function chamada MyStateMachine
+  MyStateMachine:
+    Type: AWS::StepFunctions::StateMachine
+    Properties:
+      StateMachineName: MyStateMachine
+      DefinitionS3Location:
+        Bucket: sourcecoderepos001
+        Key: step-function-template.json
+      RoleArn: !GetAtt RoleForStepFunction.Arn
+
+  # RoleForStepFunction com policy root e permissão para invocar funções Lambda
+  RoleForStepFunction:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service: states.amazonaws.com
+            Action: sts:AssumeRole
+      Policies:
+        - PolicyName: RoleForStepFunctionPolicy
+          PolicyDocument:
+            Version: "2012-10-17"
+            Statement:
+              - Effect: Allow
+                Action:
+                  - logs:CreateLogGroup
+                  - logs:CreateLogStream
+                  - logs:PutLogEvents
+                  - ses:*
+                  - states:*
+                  - sns:*
+                  - lambda:InvokeFunction  # Permissão para invocar funções Lambda
+                Resource: "*"

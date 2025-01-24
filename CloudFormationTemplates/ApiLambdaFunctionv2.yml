@@ -1,0 +1,16 @@
+AWSTemplateFormatVersion: "2010-09-09"
+
+Resources:
+  # Fun??o Lambda chamada "email"
+  apihandler:
+    Type: AWS::Lambda::Function
+    Properties:
+      FunctionName: api_handler
+      Role: !Sub arn:aws:iam::${AWS::AccountId}:role/LambdaRuntimeRole
+      Runtime: python3.9
+      Handler: lambda_function.lambda_handler
+      Code:
+        S3Bucket: sourcecoderepos001
+        S3Key: lambda_function.zip
+      Timeout: 30
+      MemorySize: 128
