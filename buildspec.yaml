@@ -7,8 +7,8 @@
   build:
     commands:
       - echo "Executando o CloudFormation para EmailSender.yml..."
-      - aws cloudformation create-stack --stack-name email-sender-stack --template-body file://EmailSender.yml --capabilities CAPABILITY_NAMED_IAM || echo "Stack já existe, tentando atualizar..."
-      - aws cloudformation update-stack --stack-name email-sender-stack --template-body file://EmailSender.yml --capabilities CAPABILITY_NAMED_IAM
+      - aws cloudformation create-stack --stack-name email-sender-stack --template-body file://CloudFormationTemplates/EmailSender.yml --capabilities CAPABILITY_NAMED_IAM || echo "Stack já existe, tentando atualizar..."
+      - aws cloudformation update-stack --stack-name email-sender-stack --template-body file://CloudFormationTemplates/EmailSender.yml --capabilities CAPABILITY_NAMED_IAM
 
 
 artifacts:
