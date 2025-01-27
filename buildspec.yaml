@@ -10,34 +10,7 @@
       - aws cloudformation create-stack --stack-name email-sender-stack --template-body file://EmailSender.yml --capabilities CAPABILITY_NAMED_IAM || echo "Stack já existe, tentando atualizar..."
       - aws cloudformation update-stack --stack-name email-sender-stack --template-body file://EmailSender.yml --capabilities CAPABILITY_NAMED_IAM
 
-      - echo "Criando o bucket S3..."
-      - aws s3 mb s3://sourcecoderepos001 || echo "Bucket já existe"
-
-      - echo "Enviando o arquivo email_reminder.zip para o bucket..."
-      - aws s3 cp email_reminder.zip s3://sourcecoderepos001/
-
-      - echo "Executando o CloudFormation para EmailLambdaFunc.yml..."
-      - aws cloudformation create-stack --stack-name email-lambda-stack --template-body file://emailLambdaFunc.yml --capabilities CAPABILITY_NAMED_IAM || echo "Stack já existe, tentando atualizar..."
-      - aws cloudformation update-stack --stack-name email-lambda-stack --template-body file://emailLambdaFunc.yml --capabilities CAPABILITY_NAMED_IAM
-
-     # - echo "Obtendo a ARN da função Lambda..."
-     # - LAMBDA_ARN=$(aws lambda get-function --function-name email --query 'Configuration.FunctionArn' --output text)
-
-      #- echo "Substituindo o placeholder no arquivo step-function-template.json..."
-      #- sed -i "s|{{LAMBDA_ARN}}|$LAMBDA_ARN|g" step-function-template.json
-
-      #- echo "Enviando o arquivo step-function-template.json atualizado para o bucket..."
-      #- aws s3 cp step-function-template.json s3://sourcecoderepos001/
-
-      #- echo "Executando o CloudFormation para CreateStateMachine.yml..."
-      #- aws cloudformation create-stack --stack-name state-machine-stack --template-body file://CreateStateMachine.yml --capabilities CAPABILITY_NAMED_IAM || echo "Stack já existe, tentando atualizar..."
-
-      #- echo "Atualizando a stack do CloudFormation para CreateStateMachine..."
-      #- aws cloudformation update-stack --stack-name state-machine-stack --template-body file://CreateStateMachine.yml --capabilities CAPABILITY_NAMED_IAM
-
-
-
-
+Template format error: At least one Resources member must be defined. (Service: AmazonCloudFormation; Status Code: 400; Error Code: ValidationError; Request ID: 72096a03-31d3-48b9-9f25-63571f153a8e; Proxy: null)
 artifacts:
   files:
     - '**/*'
