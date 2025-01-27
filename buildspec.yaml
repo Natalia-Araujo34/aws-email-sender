@@ -10,7 +10,7 @@
       - aws cloudformation create-stack --stack-name email-sender-stack --template-body file://EmailSender.yml --capabilities CAPABILITY_NAMED_IAM || echo "Stack já existe, tentando atualizar..."
       - aws cloudformation update-stack --stack-name email-sender-stack --template-body file://EmailSender.yml --capabilities CAPABILITY_NAMED_IAM
 
-Template format error: At least one Resources member must be defined. (Service: AmazonCloudFormation; Status Code: 400; Error Code: ValidationError; Request ID: 72096a03-31d3-48b9-9f25-63571f153a8e; Proxy: null)
+
 artifacts:
   files:
     - '**/*'
