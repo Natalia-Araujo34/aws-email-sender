@@ -60,7 +60,7 @@ aws cloudformation create-stack \
   --capabilities CAPABILITY_IAM 
 
 
-
+Template contains invalid characters (Service: AmazonCloudFormation; Status Code: 400; Error Code: ValidationError; Request ID: 71cade86-24d7-4acf-bfbc-8afd0cf6c053; Proxy: null)
 
 {
   "Version": "2012-10-17",
