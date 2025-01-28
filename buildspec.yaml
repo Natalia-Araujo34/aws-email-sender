@@ -2,15 +2,32 @@ version: 0.2
 
 phases:
   install:
+    runtime-versions:
+      python: 3.9
     commands:
-      - echo "Instalando AWS CLI e outras dependências"
-      - pip install awscli  # Instalar AWS CLI caso não tenha
+      # Instalar dependências de validação e AWS CLI
+      - echo "Instalando cfn-lint e AWS CLI"
+      - pip install cfn-lint awscli
+
+  pre_build:
+    commands:
+      # Verificando o repositório
+      - echo "Verificando o repositório..."
+      - git --version
 
   build:
     commands:
-      - echo "Verificando se o arquivo de template do CloudFormation está presente"
-      - ls -l CloudFormationTemplates/EmailSender.yml  # Verifica se o template existe
+      # Validando o template CloudFormation EmailSender.yml
+      - echo "Validando o template EmailSender.yml..."
+      - cfn-lint CloudFormationTemplates/EmailSender.yml
+
+  post_build:
+    commands:
+      # Fazendo upload do template CloudFormation para o S3
+      - echo "Fazendo upload do template EmailSender.yml para o S3..."
+      - aws s3 cp CloudFormationTemplates/EmailSender.yml s3://meu-bucket/CloudFormationTemplates/EmailSender.yml
 
 artifacts:
   files:
-    - '**/*'  # Isso inclui todos os arquivos no repositório, se necessário
+    - CloudFormationTemplates/EmailSender.yml
+  discard-paths: yes
