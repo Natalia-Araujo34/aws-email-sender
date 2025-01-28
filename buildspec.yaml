@@ -3,15 +3,14 @@ version: 0.2
 phases:
   install:
     commands:
-      - echo "Instalando AWS CLI..."
-      - pip install awscli  # Caso a AWS CLI não esteja instalada
+      - echo "Instalando AWS CLI e outras dependências"
+      - pip install awscli  # Instalar AWS CLI caso não tenha
 
   build:
     commands:
-      - echo "Executando o CloudFormation para EmailSender.yml..."
-      - aws cloudformation create-stack --stack-name email-sender-stack --template-body file://CloudFormationTemplates/EmailSender.yml --capabilities CAPABILITY_NAMED_IAM || echo "Stack já existe, tentando atualizar..."
-      - aws cloudformation update-stack --stack-name email-sender-stack --template-body file://CloudFormationTemplates/EmailSender.yml --capabilities CAPABILITY_NAMED_IAM
+      - echo "Verificando se o arquivo de template do CloudFormation está presente"
+      - ls -l CloudFormationTemplates/EmailSender.yml  # Verifica se o template existe
 
 artifacts:
   files:
-    - '**/*'
+    - '**/*'  # Isso inclui todos os arquivos no repositório, se necessário
