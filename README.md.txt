@@ -62,6 +62,7 @@ aws cloudformation create-stack \
 
 Template contains invalid characters (Service: AmazonCloudFormation; Status Code: 400; Error Code: ValidationError; Request ID: 71cade86-24d7-4acf-bfbc-8afd0cf6c053; Proxy: null)
 CLIENT_ERROR: git fetch failed with exit status 128 for source 9af03865_66ed_4c4e_be14_1b1b8755a6c2
+Resource handler returned message: "User: arn:aws:sts::381492167002:assumed-role/CodePipelineStarterTemplate-Depl-CloudFormationRole-ouWW3jng3ONH/AWSCloudFormation is not authorized to perform: ses:CreateEmailIdentity on resource: arn:aws:ses:us-east-2:381492167002:identity/natalia.araujo1434@gmail.com because no identity-based policy allows the ses:CreateEmailIdentity action (Service: SesV2, Status Code: 403)"
 {
   "Version": "2012-10-17",
   "Statement": [
