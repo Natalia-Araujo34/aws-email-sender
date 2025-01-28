@@ -7,4 +7,4 @@ Resources:
     Type: AWS::SES::EmailIdentity
   #Configuração do recurso
     Properties:
-      EmailIdentity: "nataliaskadi@gmail.com"
+      EmailIdentity: "natalia.araujo1434@gmail.com"
