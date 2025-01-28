@@ -1,0 +1,16 @@
+version: 0.2
+
+phases:
+  install:
+    commands:
+      - echo "Instalando AWS CLI..."
+      - pip install awscli  # Caso a AWS CLI não esteja instalada
+
+  build:
+    commands:
+      - echo "Criando o S3 bucket..."
+      - aws s3 mb s3://sourcecoderepos001 --region us-east-1 || echo "Bucket já existe ou erro ao criar o bucket"
+
+artifacts:
+  files:
+    - '**/*'
