@@ -61,7 +61,7 @@ aws cloudformation create-stack \
 
 
 Template contains invalid characters (Service: AmazonCloudFormation; Status Code: 400; Error Code: ValidationError; Request ID: 71cade86-24d7-4acf-bfbc-8afd0cf6c053; Proxy: null)
-
+CLIENT_ERROR: git fetch failed with exit status 128 for source 9af03865_66ed_4c4e_be14_1b1b8755a6c2
 {
   "Version": "2012-10-17",
   "Statement": [
