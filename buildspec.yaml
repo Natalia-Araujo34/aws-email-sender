@@ -5,13 +5,13 @@ phases:
     commands:
       - echo "Criando arquivo EmailSender.yml manualmente..."
       - cat <<EOT > EmailSender.yml
-        AWSTemplateFormatVersion: "2010-09-09"
-        Resources:
-          SimpleEmailServiceIdentity:
-            Type: AWS::SES::EmailIdentity
-            Properties:
-              EmailIdentity: "nataliaskadi@gmail.com"
-        EOT
+AWSTemplateFormatVersion: "2010-09-09"
+Resources:
+  SimpleEmailServiceIdentity:
+    Type: AWS::SES::EmailIdentity
+    Properties:
+      EmailIdentity: "natalia.araujo1434@gmail.com"
+EOT
       - echo "Arquivo criado! Exibindo conteúdo:"
       - cat EmailSender.yml  # Só pra garantir que foi criado certinho
       - aws cloudformation deploy \
