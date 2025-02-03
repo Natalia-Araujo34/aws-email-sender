@@ -3,24 +3,23 @@ version: 0.2
 phases:
   install:
     runtime-versions:
-      python: 3.9  # Usando uma versão compatível com o ambiente do CodeBuild
+      python: 3.x  # Se necessário para dependências Python, ajuste conforme sua stack
     commands:
-      - echo "Instalando dependências..."
-      - pip install --upgrade awscli  # Instala ou atualiza o AWS CLI
+      - echo "Instalando dependências necessárias"
+      - pip install --upgrade awscli  # Caso precise do AWS CLI
 
   build:
     commands:
-      - echo "Fazendo upload do arquivo CloudFormation para o S3..."
-      - aws s3 cp CloudFormationTemplates/EmailSender.yml s3://mys3bucketemailsenderpipe/EmailSender.yml  # Faz o upload para o S3
-
-      - echo "Fazendo deploy do template CloudFormation..."
+      - echo "Fazendo o deploy do CloudFormation"
       - aws cloudformation deploy \
-          --template-file s3://mys3bucketemailsenderpipe/EmailSender.yml \
+          --template-file CloudFormationTemplates/EmailSender.yml \
           --stack-name EmailSenderStack \
-          --capabilities CAPABILITY_IAM CAPABILITY_NAMED_IAM
+          --capabilities CAPABILITY_NAMED_IAM  # Caso você precise de permissões IAM no seu template
 
-  post_build:
-    commands:
-      - echo "Verificando o status da stack..."
-      - aws cloudformation describe-stacks --stack-name EmailSenderStack
-      - echo "Deploy da stack concluído!"
+artifacts:
+  files:
+    - '**/*'  # Ou você pode especificar quais arquivos serão usados ou gerados durante o processo
+
+cache:
+  paths:
+    - '/root/.m2/**/*'  # Se precisar de cache de dependências Maven ou outros, adicione os paths aqui
