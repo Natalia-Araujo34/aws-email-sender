@@ -1,18 +1,60 @@
-version: 0.2
+AWSTemplateFormatVersion: "2010-09-09"
 
-phases:
-  build:
-    commands:
-      - echo "Criando arquivo EmailSender.yml manualmente..."
-      - echo "AWSTemplateFormatVersion: '2010-09-09'" > EmailSender.yml
-      - echo "Resources:" >> EmailSender.yml
-      - echo "  SimpleEmailServiceIdentity:" >> EmailSender.yml
-      - echo "    Type: 'AWS::SES::EmailIdentity'" >> EmailSender.yml
-      - echo "    Properties:" >> EmailSender.yml
-      - echo "      EmailIdentity: 'natalia.araujo1434@gmail.com'" >> EmailSender.yml
-      - echo "Arquivo criado!"
-      - cat EmailSender.yml  # Exibe o conteúdo do arquivo gerado
-      - aws cloudformation deploy \
-          --template-file EmailSender.yml \
-          --stack-name EmailSenderStack \
-          --capabilities CAPABILITY_IAM
+Resources:
+
+  # Definir a identidade de e-mail (para envio de e-mails via SES)
+  SimpleEmailServiceIdentity:
+    Type: AWS::SES::EmailIdentity
+    Properties:
+      EmailIdentity: "nataliaskadi@gmail.com"
+
+  # Função Lambda para enviar e-mails
+  EmailLambdaFunction:
+    Type: AWS::Lambda::Function
+    Properties:
+      FunctionName: email
+      Runtime: python3.9
+      Handler: index.handler
+      Code:
+        # Substituímos o código zip por um simples código inline
+        ZipFile: |
+          import json
+
+          def handler(event, context):
+              # Função simples de "Hello World"
+              print("Hello, world!")
+              return {
+                  'statusCode': 200,
+                  'body': json.dumps('Hello from Lambda!')
+              }
+      Role: !GetAtt LambdaExecutionRole.Arn
+      Timeout: 30
+      MemorySize: 128
+
+  # Role do Lambda para execução
+  LambdaExecutionRole:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service:
+                - lambda.amazonaws.com
+            Action: 
+              - sts:AssumeRole
+      Policies:
+        - PolicyName: LambdaExecutionPolicy
+          PolicyDocument:
+            Version: "2012-10-17"
+            Statement:
+              - Effect: Allow
+                Action:
+                  - logs:CreateLogGroup
+                  - logs:CreateLogStream
+                  - logs:PutLogEvents
+                  - ses:*
+                  - sns:*
+                  - states:*
+                Resource: "*"
