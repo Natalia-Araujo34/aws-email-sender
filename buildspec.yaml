@@ -1,26 +1,9 @@
 version: 0.2
 
 phases:
-  install:
-    runtime-versions:
-      python: 3.x
-    commands:
-      - echo "Instalando dependências necessárias"
-      - pip install --upgrade awscli  # Se precisar de AWS CLI
-
   build:
     commands:
-      - echo "Fazendo o deploy do CloudFormation"
-      - wget https://raw.githubusercontent.com/Natalia-Araujo34/aws-email-sender/main/CloudFormationTemplates/EmailSender.yml -O EmailSender.yml  # Baixa o template do GitHub
-      - aws cloudformation deploy \
-          --template-file EmailSender.yml \
-          --stack-name EmailSenderStack \
-          --capabilities CAPABILITY_NAMED_IAM
+      - echo "Listando arquivos no diretório atual"
+      - ls -R  # Lista todos os arquivos e subdiretórios
+      - cat CloudFormationTemplates/EmailSender.yml  # Mostra o conteúdo do arquivo no log
 
-artifacts:
-  files:
-    - '**/*'
-
-cache:
-  paths:
-    - '/root/.m2/**/*'  # Cache de dependências, se necessário
