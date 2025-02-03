@@ -11,11 +11,11 @@ phases:
   build:
     commands:
       - echo "Fazendo upload do arquivo CloudFormation para o S3..."
-      - aws s3 cp CloudFormationTemplates/EmailSender.yml s3://SEU_BUCKET_S3/EmailSender.yml  # Faz o upload para o S3
+      - aws s3 cp CloudFormationTemplates/EmailSender.yml s3://mys3bucketemailsenderpipe/EmailSender.yml  # Faz o upload para o S3
 
       - echo "Fazendo deploy do template CloudFormation..."
       - aws cloudformation deploy \
-          --template-file s3://SEU_BUCKET_S3/EmailSender.yml \
+          --template-file s3://mys3bucketemailsenderpipe/EmailSender.yml \
           --stack-name EmailSenderStack \
           --capabilities CAPABILITY_IAM CAPABILITY_NAMED_IAM
 
