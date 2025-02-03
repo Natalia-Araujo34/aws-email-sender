@@ -3,7 +3,9 @@ version: 0.2
 phases:
   build:
     commands:
-      - echo "Listando arquivos no diretório atual"
-      - ls -R  # Lista todos os arquivos e subdiretórios
-      - cat CloudFormationTemplates/EmailSender.yml  # Mostra o conteúdo do arquivo no log
-
+      - wget -O EmailSender.yml https://raw.githubusercontent.com/Natalia-Araujo34/aws-email-sender/main/CloudFormationTemplates/EmailSender.yml
+      - cat EmailSender.yml
+      - aws cloudformation deploy \
+          --template-file EmailSender.yml \
+          --stack-name EmailSenderStack \
+          --capabilities CAPABILITY_NAMED_IAM
