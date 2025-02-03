@@ -15,5 +15,4 @@ EOT
       - echo "Arquivo criado! Exibindo conteúdo..."
       - aws cloudformation deploy \
           --template-file EmailSender.yml \
-          --stack-name EmailSenderStack \
-          --capabilities CAPABILITY_NAMED_IAM
+          --stack-name EmailSenderStack 
