@@ -10,8 +10,14 @@ phases:
 
   build:
     commands:
+      - echo "Listando arquivos no diretório atual..."
+      - ls -R  # Isso ajuda a depurar se os arquivos estão no local correto
       - echo "Fazendo deploy da stack CloudFormation..."
       - aws cloudformation deploy \
           --template-file CloudFormationTemplates/EmailSender.yml \
           --stack-name EmailSenderStack \
           --capabilities CAPABILITY_IAM CAPABILITY_NAMED_IAM
+
+artifacts:
+  files:
+    - '**/*'  # Inclui todos os arquivos e subdiretórios no pacote de artefatos
