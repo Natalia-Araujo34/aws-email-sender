@@ -1,17 +1,10 @@
-version: 0.2
-
-phases:
-  install:
-    commands:
-      - echo "Fase de instalação iniciada"
-      - echo "Nenhuma instalação necessária para este teste"
-  build:
-    commands:
-      - echo "Fase de build iniciada"
-      - echo "Listando diretórios e arquivos no ambiente de build:"
-      - ls -l
-      - echo "Teste básico de execução concluído com sucesso!"
-  post_build:
-    commands:
-      - echo "Fase pós-build iniciada"
-      - echo "Tudo parece estar funcionando no buildspec.yml!"
+AWSTemplateFormatVersion: "2010-09-09"
+Resources:
+  
+  # Definir a identidade de e-mail (para envio de e-mails via SES)
+  SimpleEmailServiceIdentity:
+  #Tipo de recurso a ser criado
+    Type: AWS::SES::EmailIdentity
+  #Configuração do recurso
+    Properties:
+      EmailIdentity: "natalia.araujo1434@gmail.com"
