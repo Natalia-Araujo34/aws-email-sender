@@ -4,14 +4,15 @@ phases:
   build:
     commands:
       - echo "Criando arquivo EmailSender.yml manualmente..."
-      - echo 'AWSTemplateFormatVersion: "2010-09-09"' > EmailSender.yml
-      - echo 'Resources:' >> EmailSender.yml
-      - echo '  SimpleEmailServiceIdentity:' >> EmailSender.yml
-      - echo '    Type: AWS::SES::EmailIdentity' >> EmailSender.yml
-      - echo '    Properties:' >> EmailSender.yml
-      - echo '      EmailIdentity: "natalia.araujo1434@gmail.com"' >> EmailSender.yml
+      - cat > EmailSender.yml << 'EOT'
+AWSTemplateFormatVersion: "2010-09-09"
+Resources:
+  SimpleEmailServiceIdentity:
+    Type: AWS::SES::EmailIdentity
+    Properties:
+      EmailIdentity: "natalia.araujo1434@gmail.com"
+EOT
       - echo "Arquivo criado! Exibindo conteúdo..."
-      - cat EmailSender.yml  # Só pra garantir que foi criado certinho
       - aws cloudformation deploy \
           --template-file EmailSender.yml \
           --stack-name EmailSenderStack \
