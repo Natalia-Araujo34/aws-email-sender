@@ -13,7 +13,6 @@ Resources:
       EmailIdentity: "natalia.araujo1434@gmail.com"
 EOT
       - echo "Arquivo criado! Exibindo conteúdo:"
-      - cat EmailSender.yml  # Só pra garantir que foi criado certinho
       - aws cloudformation deploy \
           --template-file EmailSender.yml \
           --stack-name EmailSenderStack \
