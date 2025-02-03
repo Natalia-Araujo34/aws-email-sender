@@ -3,21 +3,24 @@ version: 0.2
 phases:
   install:
     runtime-versions:
-      python: 3.9
+      python: 3.9  # Usando uma versão compatível com o ambiente do CodeBuild
     commands:
-      - echo "Instalando AWS CLI..."
-      - pip install --upgrade awscli
+      - echo "Instalando dependências..."
+      - pip install --upgrade awscli  # Instala ou atualiza o AWS CLI
 
   build:
     commands:
-      - echo "Listando arquivos no diretório atual..."
-      - ls -R  # Isso ajuda a depurar se os arquivos estão no local correto
-      - echo "Fazendo deploy da stack CloudFormation..."
+      - echo "Fazendo upload do arquivo CloudFormation para o S3..."
+      - aws s3 cp CloudFormationTemplates/EmailSender.yml s3://SEU_BUCKET_S3/EmailSender.yml  # Faz o upload para o S3
+
+      - echo "Fazendo deploy do template CloudFormation..."
       - aws cloudformation deploy \
-          --template-file creates3.yaml \
+          --template-file s3://SEU_BUCKET_S3/EmailSender.yml \
           --stack-name EmailSenderStack \
           --capabilities CAPABILITY_IAM CAPABILITY_NAMED_IAM
 
-artifacts:
-  files:
-    - '**/*'  # Inclui todos os arquivos e subdiretórios no pacote de artefatos
+  post_build:
+    commands:
+      - echo "Verificando o status da stack..."
+      - aws cloudformation describe-stacks --stack-name EmailSenderStack
+      - echo "Deploy da stack concluído!"
