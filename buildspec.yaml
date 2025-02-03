@@ -14,7 +14,7 @@ phases:
       - ls -R  # Isso ajuda a depurar se os arquivos estão no local correto
       - echo "Fazendo deploy da stack CloudFormation..."
       - aws cloudformation deploy \
-          --template-file EmailSender.yml \
+          --template-file creates3.yml \
           --stack-name EmailSenderStack \
           --capabilities CAPABILITY_IAM CAPABILITY_NAMED_IAM
 
