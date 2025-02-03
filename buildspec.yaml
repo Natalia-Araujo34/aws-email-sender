@@ -1,16 +1,19 @@
 version: 0.2
 
 phases:
-  install:
-    runtime-versions:
-      python: latest  # Apenas se precisar de Python, pode remover se não precisar
   build:
     commands:
-      - echo "Clonando o repositório..."
-      - git clone https://github.com/Natalia-Araujo34/aws-email-sender.git
-      - cd aws-email-sender/CloudFormationTemplates
-      - ls -lah  # Lista os arquivos para ver se baixou certo
-      - cat EmailSender.yml  # Exibe o conteúdo do YAML para garantir que não está vindo HTML
+      - echo "Criando arquivo EmailSender.yml manualmente..."
+      - cat <<EOT > EmailSender.yml
+        AWSTemplateFormatVersion: "2010-09-09"
+        Resources:
+          SimpleEmailServiceIdentity:
+            Type: AWS::SES::EmailIdentity
+            Properties:
+              EmailIdentity: "nataliaskadi@gmail.com"
+        EOT
+      - echo "Arquivo criado! Exibindo conteúdo:"
+      - cat EmailSender.yml  # Só pra garantir que foi criado certinho
       - aws cloudformation deploy \
           --template-file EmailSender.yml \
           --stack-name EmailSenderStack \
