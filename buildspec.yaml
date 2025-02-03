@@ -1,64 +1,17 @@
-AWSTemplateFormatVersion: "2010-09-09"
+version: 0.2
 
-Resources:
+phases:
+  install:
+    runtime-versions:
+      python: 3.9
+    commands:
+      - echo "Instalando AWS CLI..."
+      - pip install --upgrade awscli
 
-  # Definir a identidade de e-mail (para envio de e-mails via SES)
-  SimpleEmailServiceIdentity:
-    Type: AWS::SES::EmailIdentity
-    Properties:
-      EmailIdentity: "natalia.araujo1434@gmail.com"  # Substitua com seu e-mail
-
-  # Definir a função Lambda para enviar e-mails
-  EmailLambdaFunction:
-    Type: AWS::Lambda::Function
-    Properties:
-      FunctionName: email
-      Runtime: python3.9
-      Handler: index.handler
-      Code:
-        S3Bucket: sourcecoderepos001  # Substitua com o nome do seu bucket S3
-        S3Key: email_reminder.zip    # Substitua com o nome do seu arquivo ZIP
-      Role: !GetAtt LambdaExecutionRole.Arn
-      Timeout: 30
-      MemorySize: 128
-
-  # Função IAM para permitir que a Lambda interaja com outros serviços
-  LambdaExecutionRole:
-    Type: AWS::IAM::Role
-    Properties:
-      AssumeRolePolicyDocument:
-        Version: "2012-10-17"
-        Statement:
-          - Effect: Allow
-            Principal:
-              Service:
-                - lambda.amazonaws.com
-            Action: 
-              - sts:AssumeRole
-      Policies:
-        - PolicyName: LambdaExecutionPolicy
-          PolicyDocument:
-            Version: "2012-10-17"
-            Statement:
-              - Effect: Allow
-                Action:
-                  - logs:CreateLogGroup
-                  - logs:CreateLogStream
-                  - logs:PutLogEvents
-                  - ses:SendEmail  # Permissão específica para enviar e-mails pelo SES
-                  - sns:Publish
-                  - states:StartExecution
-                Resource: "*"
-
-Outputs:
-  EmailIdentity:
-    Description: "Email Identity"
-    Value: !Ref SimpleEmailServiceIdentity
-    Export:
-      Name: EmailIdentity
-
-  LambdaFunctionName:
-    Description: "Lambda Function Name"
-    Value: !Ref EmailLambdaFunction
-    Export:
-      Name: EmailLambdaFunction
+  build:
+    commands:
+      - echo "Fazendo deploy da stack CloudFormation..."
+      - aws cloudformation deploy \
+          --template-file CloudFormationTemplates/EmailSender.yml \
+          --stack-name EmailSenderStack \
+          --capabilities CAPABILITY_IAM CAPABILITY_NAMED_IAM
