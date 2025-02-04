@@ -5,7 +5,7 @@ Resources:
   SimpleEmailServiceIdentity:
     Type: AWS::SES::EmailIdentity
     Properties:
-      EmailIdentity: "natalia.araujo1434@gmail.com"
+      EmailIdentity: "natalia.aaraujo34@gmail.com"
 
   # Função Lambda "email"
   EmailLambdaFunction:
