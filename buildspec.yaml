@@ -6,32 +6,37 @@ Resources:
   SimpleEmailServiceIdentity:
     Type: AWS::SES::EmailIdentity
     Properties:
-      EmailIdentity: "nataliaskadi@gmail.com"
+      EmailIdentity: "natalia.araujo1434@gmail.com"
 
-  # Função Lambda para enviar e-mails
-  EmailLambdaFunction:
+  # Função Lambda chamada "api_handler"
+  apihandler:
     Type: AWS::Lambda::Function
     Properties:
-      FunctionName: email
+      FunctionName: api_handler
       Runtime: python3.9
-      Handler: index.handler
+      Handler: lambda_function.lambda_handler
       Code:
-        # Substituímos o código zip por um simples código inline
-        ZipFile: |
-          import json
-
-          def handler(event, context):
-              # Função simples de "Hello World"
-              print("Hello, world!")
-              return {
-                  'statusCode': 200,
-                  'body': json.dumps('Hello from Lambda!')
-              }
+        S3Bucket: sourcecoderepos001
+        S3Key: lambda_function.zip
       Role: !GetAtt LambdaExecutionRole.Arn
       Timeout: 30
       MemorySize: 128
 
-  # Role do Lambda para execução
+  # Função Lambda chamada "email"
+  email:
+    Type: AWS::Lambda::Function
+    Properties:
+      FunctionName: email
+      Runtime: python3.9
+      Handler: email_function.lambda_handler
+      Code:
+        S3Bucket: sourcecoderepos001
+        S3Key: email_reminder.zip
+      Role: !GetAtt LambdaExecutionRole.Arn
+      Timeout: 30
+      MemorySize: 128
+
+  # Role do Lambda com permissões para execução
   LambdaExecutionRole:
     Type: AWS::IAM::Role
     Properties:
@@ -57,4 +62,42 @@ Resources:
                   - ses:*
                   - sns:*
                   - states:*
+                Resource: "*"
+
+  # Step Function chamada MyStateMachine
+  MyStateMachine:
+    Type: AWS::StepFunctions::StateMachine
+    Properties:
+      StateMachineName: MyStateMachine
+      DefinitionS3Location:
+        Bucket: sourcecoderepos001
+        Key: step-function-template.json
+      RoleArn: !GetAtt RoleForStepFunction.Arn
+
+  # RoleForStepFunction com policy root e permissão para invocar funções Lambda
+  RoleForStepFunction:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service:
+                - states.amazonaws.com
+            Action: sts:AssumeRole
+      Policies:
+        - PolicyName: RoleForStepFunctionPolicy
+          PolicyDocument:
+            Version: "2012-10-17"
+            Statement:
+              - Effect: Allow
+                Action:
+                  - logs:CreateLogGroup
+                  - logs:CreateLogStream
+                  - logs:PutLogEvents
+                  - ses:*
+                  - states:*
+                  - sns:*
+                  - lambda:InvokeFunction  # Permissão para invocar funções Lambda
                 Resource: "*"
