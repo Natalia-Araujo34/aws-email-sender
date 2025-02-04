@@ -1,42 +1,43 @@
 AWSTemplateFormatVersion: "2010-09-09"
 
 Resources:
-
-  # Definir a identidade de e-mail (para envio de e-mails via SES)
+  # Identidade de E-mail para SES
   SimpleEmailServiceIdentity:
     Type: AWS::SES::EmailIdentity
     Properties:
       EmailIdentity: "natalia.araujo1434@gmail.com"
 
-  # Função Lambda chamada "api_handler"
-  apihandler:
-    Type: AWS::Lambda::Function
-    Properties:
-      FunctionName: api_handler
-      Runtime: python3.9
-      Handler: lambda_function.lambda_handler
-      Code:
-        S3Bucket: sourcecoderepos001
-        S3Key: lambda_function.zip
-      Role: !GetAtt LambdaExecutionRole.Arn
-      Timeout: 30
-      MemorySize: 128
-
-  # Função Lambda chamada "email"
-  email:
+  # Função Lambda "email"
+  EmailLambdaFunction:
     Type: AWS::Lambda::Function
     Properties:
       FunctionName: email
       Runtime: python3.9
-      Handler: email_function.lambda_handler
-      Code:
-        S3Bucket: sourcecoderepos001
-        S3Key: email_reminder.zip
+      Handler: index.lambda_handler
       Role: !GetAtt LambdaExecutionRole.Arn
       Timeout: 30
       MemorySize: 128
+      Code:
+        ZipFile: |
+          def lambda_handler(event, context):
+              return {"statusCode": 200, "body": "Hello from Email Lambda!"}
 
-  # Role do Lambda com permissões para execução
+  # Função Lambda "api_handler"
+  ApiHandlerLambdaFunction:
+    Type: AWS::Lambda::Function
+    Properties:
+      FunctionName: api_handler
+      Runtime: python3.9
+      Handler: index.lambda_handler
+      Role: !GetAtt LambdaExecutionRole.Arn
+      Timeout: 30
+      MemorySize: 128
+      Code:
+        ZipFile: |
+          def lambda_handler(event, context):
+              return {"statusCode": 200, "body": "Hello from API Handler!"}
+
+  # Role para as funções Lambda
   LambdaExecutionRole:
     Type: AWS::IAM::Role
     Properties:
@@ -64,17 +65,25 @@ Resources:
                   - states:*
                 Resource: "*"
 
-  # Step Function chamada MyStateMachine
+  # Step Function
   MyStateMachine:
     Type: AWS::StepFunctions::StateMachine
     Properties:
       StateMachineName: MyStateMachine
-      DefinitionS3Location:
-        Bucket: sourcecoderepos001
-        Key: step-function-template.json
       RoleArn: !GetAtt RoleForStepFunction.Arn
+      DefinitionString: |
+        {
+          "StartAt": "HelloWorld",
+          "States": {
+            "HelloWorld": {
+              "Type": "Pass",
+              "Result": "Hello from Step Function!",
+              "End": true
+            }
+          }
+        }
 
-  # RoleForStepFunction com policy root e permissão para invocar funções Lambda
+  # Role para Step Functions
   RoleForStepFunction:
     Type: AWS::IAM::Role
     Properties:
@@ -83,8 +92,7 @@ Resources:
         Statement:
           - Effect: Allow
             Principal:
-              Service:
-                - states.amazonaws.com
+              Service: states.amazonaws.com
             Action: sts:AssumeRole
       Policies:
         - PolicyName: RoleForStepFunctionPolicy
@@ -99,5 +107,5 @@ Resources:
                   - ses:*
                   - states:*
                   - sns:*
-                  - lambda:InvokeFunction  # Permissão para invocar funções Lambda
+                  - lambda:InvokeFunction
                 Resource: "*"
